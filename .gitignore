@@ -1,0 +1,36 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+loadbalancer
+/bin/
+
+# Test binaries and coverage
+*.test
+*.out
+coverage.*
+
+# Go workspace / vendor
+go.work
+go.work.sum
+vendor/
+
+# Dependency directories and caches
+.go/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Env
+.env
+.env.local
