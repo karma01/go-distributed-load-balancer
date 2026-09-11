@@ -7,35 +7,30 @@ No dependencies. No config files. One `main.go`.
 ## Architecture
 
 ```mermaid
-graph LR
-    C1["Client"]
-    C2["Client"]
-    C3["Client"]
+flowchart LR
+    C["Clients"]
 
     subgraph LB["Load Balancer :8080"]
-        direction TB
-        H["HTTP Handler<br/>net/http"]
+        H["HTTP Handler"]
         P["ServerPool<br/>round-robin cursor"]
-        HC["HealthCheck<br/>goroutine · 10s ticker"]
-        H --> P
-        HC -.->|"SetAlive(true/false)"| P
+        HC["HealthCheck goroutine<br/>10s ticker"]
     end
 
-    B1["Backend A<br/>:8081<br/>ALIVE"]
-    B2["Backend B<br/>:8082<br/>ALIVE"]
-    B3["Backend C<br/>:8083<br/>DOWN"]
+    B1["Backend A :8081<br/>ALIVE"]
+    B2["Backend B :8082<br/>ALIVE"]
+    B3["Backend C :8083<br/>DOWN"]
 
-    C1 --> H
-    C2 --> H
-    C3 --> H
+    C --> H
+    H --> P
+    HC -. "SetAlive true/false" .-> P
 
-    P -->|"ReverseProxy"| B1
-    P -->|"ReverseProxy"| B2
-    P -.->|"skipped"| B3
+    P -- "ReverseProxy" --> B1
+    P -- "ReverseProxy" --> B2
+    P -. "skipped" .-> B3
 
-    HC -.->|"TCP dial 2s"| B1
-    HC -.->|"TCP dial 2s"| B2
-    HC -.->|"TCP dial 2s"| B3
+    HC -. "TCP dial 2s" .-> B1
+    HC -. "TCP dial 2s" .-> B2
+    HC -. "TCP dial 2s" .-> B3
 
     classDef lbBox fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f1f5f9
     classDef alive fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#ecfdf5
@@ -45,7 +40,7 @@ graph LR
     class H,P,HC lbBox
     class B1,B2 alive
     class B3 dead
-    class C1,C2,C3 client
+    class C client
 ```
 
 ## How a request is routed
